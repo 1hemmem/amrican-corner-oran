@@ -6,7 +6,6 @@ import Contact from '@/components/sections/contact';
 import Newsletter from '@/components/sections/newsletter';
 import SiteHeader from '@/components/site-header';
 import SiteFooter from '@/components/site-footer';
-import useSatate from 'react';
 
 export default function Home() {
   return (
