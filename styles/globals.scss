@@ -1,6 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import './_variables.scss';
+@import './_keyframe-animations.scss';
 
 body {
   font-family: Arial, Helvetica, sans-serif;
