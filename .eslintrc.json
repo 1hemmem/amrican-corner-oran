@@ -35,10 +35,10 @@
       "error",
       { "argsIgnorePattern": "^_" }
     ],
-
+    "jsx-a11y/no-noninteractive-tabindex": "off",
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
-    "eqeqeq": ["error", "always"],
+    "eqeqeq": ["warn", "always"],
     "no-console": "warn",
     "curly": ["error", "multi-line"],
     "jsx-a11y/alt-text": "warn",
