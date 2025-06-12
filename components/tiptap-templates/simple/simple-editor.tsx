@@ -74,7 +74,8 @@ import { handleImageUpload, MAX_FILE_SIZE } from '@/lib/tiptap-utils';
 // --- Styles ---
 import '@/components/tiptap-templates/simple/simple-editor.scss';
 
-import content from '@/components/tiptap-templates/simple/data/content.json';
+// import content from '@/components/tiptap-templates/simple/data/content.json';
+import { useDebounce } from 'use-debounce';
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -175,7 +176,15 @@ const MobileToolbarContent = ({
   </>
 );
 
-export function SimpleEditor() {
+export function SimpleEditor({
+  blog_id,
+  title,
+  content,
+}: {
+  blog_id: string;
+  title: string;
+  content: any;
+}) {
   const isMobile = useIsMobile();
   const windowSize = useWindowSize();
   const [mobileView, setMobileView] = React.useState<
@@ -217,12 +226,32 @@ export function SimpleEditor() {
       Link.configure({ openOnClick: false }),
     ],
     content: content,
+    onUpdate: ({ editor }) => {
+      setCurrentContent(editor.getJSON());
+    },
   });
+  const [currentContent, setCurrentContent] = React.useState(content);
+  const [debouncedContent] = useDebounce(currentContent, 2000);
+
+  React.useEffect(() => {
+    if (debouncedContent) {
+      // send API request to save content
+      fetch(`/api/blogs/save`, {
+        method: 'POST',
+        body: JSON.stringify({
+          blog_id: blog_id,
+          title: title,
+          content: debouncedContent,
+        }),
+      });
+    }
+  }, [blog_id, title, debouncedContent]);
 
   const bodyRect = useCursorVisibility({
     editor,
     overlayHeight: toolbarRef.current?.getBoundingClientRect().height ?? 0,
   });
+  //TODO: This should call the api each time to save the data into the database
 
   React.useEffect(() => {
     if (!isMobile && mobileView !== 'main') {

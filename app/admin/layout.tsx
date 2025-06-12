@@ -1,63 +1,88 @@
 'use client';
-import Image from 'next/image';
 
+import { AppSidebar } from '@/components/app-sidebar';
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { useEffect, useState } from 'react';
 import { authClient } from '@/lib/auth-client';
-import { LoginForm } from './login-form';
-import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
+import { Spinner } from '@/components/ui/spinner';
 
-export default function RootLayout({
+export default function AuthLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const [session, setSession] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [authStatus, setAuthStatus] = useState<
+    'loading' | 'authenticated' | 'unauthenticated'
+  >('loading');
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
-    authClient.getSession().then((res) => {
-      setSession(res?.data || null);
-      setLoading(false);
-    });
-  }, []);
-  if (loading) {
-    return <div>Loading... </div>;
-  }
-  // If the user is authenticated render the admin page (children)
-  if (session) {
-    return <div>{children}</div>;
-  } else {
+    const checkAuth = async () => {
+      try {
+        const res = await authClient.getSession();
+
+        if (res?.data) {
+          setAuthStatus('authenticated');
+          // Redirect to /admin/blogs if on root admin path or login
+          if (pathname === '/admin' || pathname === '/admin/login') {
+            router.push('/admin/blogs');
+          }
+        } else {
+          setAuthStatus('unauthenticated');
+          // If not on login page, redirect to login
+          if (pathname !== '/admin/login') {
+            router.push('/admin/login');
+          }
+        }
+      } catch (error) {
+        console.error(error);
+        setAuthStatus('unauthenticated');
+        if (pathname !== '/admin/login') {
+          router.push('/admin/login');
+        }
+      }
+    };
+
+    checkAuth();
+  }, [pathname, router]);
+
+  // Show spinner only during initial auth check
+  if (authStatus === 'loading') {
     return (
-      <div className="grid min-h-svh lg:grid-cols-2">
-        <div className="flex flex-col gap-4 p-6 md:p-10">
-          <div className="flex justify-center gap-2 md:justify-start">
-            <Link href="/" className="flex items-center gap-2 font-medium">
-              <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-                <Image
-                  src="/logo.png"
-                  alt="American Corner Oran Logo"
-                  width={40}
-                  height={40}
-                  className="h-10 w-10"
-                />
-              </div>
-              American Corner Oran
-            </Link>
-          </div>
-          <div className="flex flex-1 items-center justify-center">
-            <div className="w-full max-w-xs">
-              <LoginForm />
-            </div>
-          </div>
-        </div>
-        <div className="bg-muted relative hidden lg:block">
-          <Image
-            src="/program-english.jpg"
-            alt="American Corner Oran"
-            width={40}
-            height={40}
-            className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-          />
-        </div>
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner className="w-10 h-10" />
       </div>
     );
   }
+
+  // Show login page if unauthenticated
+  if (authStatus === 'unauthenticated' && pathname === '/admin/login') {
+    return children;
+  }
+
+  // Show protected content if authenticated
+  if (authStatus === 'authenticated') {
+    // Additional check to handle cases where redirect hasn't happened yet
+    if (pathname === '/admin' || pathname === '/admin/login') {
+      return (
+        <div className="flex items-center justify-center min-h-screen">
+          <Spinner className="w-10 h-10" />
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex flex-col h-screen overflow-hidden">
+        <SidebarProvider>
+          <AppSidebar />
+          <SidebarInset className="flex-1 overflow-hidden">
+            <div className="flex-1 overflow-y-auto">{children}</div>
+          </SidebarInset>
+        </SidebarProvider>
+      </div>
+    );
+  }
+
+  // Return null for any other case (will be replaced by the router)
+  return null;
 }

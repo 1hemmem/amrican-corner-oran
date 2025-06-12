@@ -26,7 +26,7 @@ export function LoginForm({
       {
         email,
         password,
-        callbackURL: '/dashboard', // optional
+        callbackURL: '/admin', // optional
       },
       {
         onRequest: () => {
