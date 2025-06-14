@@ -1,7 +1,11 @@
 'use client';
 
 import { AppSidebar } from '@/components/app-sidebar';
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
+import {
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger,
+} from '@/components/ui/sidebar';
 import { useEffect, useState } from 'react';
 import { authClient } from '@/lib/auth-client';
 import { useRouter, usePathname } from 'next/navigation';
@@ -75,6 +79,7 @@ export default function AuthLayout({
       <div className="flex flex-col h-screen overflow-hidden">
         <SidebarProvider>
           <AppSidebar />
+          <SidebarTrigger className="pt-2" />
           <SidebarInset className="flex-1 overflow-hidden">
             <div className="flex-1 overflow-y-auto">{children}</div>
           </SidebarInset>

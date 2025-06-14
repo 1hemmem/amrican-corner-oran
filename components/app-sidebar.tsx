@@ -25,9 +25,9 @@ const items = [
 export function AppSidebar() {
   return (
     <Sidebar
-      collapsible="icon"
       variant="floating"
       className="flex flex-col h-screen"
+      collapsible="icon"
     >
       <SidebarHeader>
         <SidebarMenu>

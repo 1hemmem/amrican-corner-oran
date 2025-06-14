@@ -143,7 +143,7 @@ export const handleImageUpload = async (
   if (!file) {
     throw new Error('No file provided');
   }
-
+  console.log(file);
   if (file.size > MAX_FILE_SIZE) {
     throw new Error(
       `File size exceeds maximum allowed (${MAX_FILE_SIZE / (1024 * 1024)}MB)`
@@ -159,10 +159,10 @@ export const handleImageUpload = async (
     onProgress?.({ progress });
   }
 
-  return '/images/placeholder-image.png';
-
+  // return '/images/placeholder-image.png';
+  console.log('heeeeeer');
   // Uncomment for production use:
-  // return convertFileToBase64(file, abortSignal);
+  return convertFileToBase64(file, abortSignal);
 };
 
 /**

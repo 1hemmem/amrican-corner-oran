@@ -77,7 +77,7 @@ model Blogs {
   id             String   @id @default(cuid())
   blog_cover_url String?
   title          String
-  content        Json?
+  content        String?
   isPublic       Boolean  @default(false)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @default(now())

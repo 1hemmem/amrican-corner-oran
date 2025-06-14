@@ -209,7 +209,7 @@ export function SimpleEditor({
       TaskList,
       TaskItem.configure({ nested: true }),
       Highlight.configure({ multicolor: true }),
-      Image,
+      Image.configure({ allowBase64: true }),
       Typography,
       Superscript,
       Subscript,
@@ -227,7 +227,7 @@ export function SimpleEditor({
     ],
     content: content,
     onUpdate: ({ editor }) => {
-      setCurrentContent(editor.getJSON());
+      setCurrentContent(editor.getHTML());
     },
   });
   const [currentContent, setCurrentContent] = React.useState(content);
@@ -251,14 +251,12 @@ export function SimpleEditor({
     editor,
     overlayHeight: toolbarRef.current?.getBoundingClientRect().height ?? 0,
   });
-  //TODO: This should call the api each time to save the data into the database
 
   React.useEffect(() => {
     if (!isMobile && mobileView !== 'main') {
       setMobileView('main');
     }
   }, [isMobile, mobileView]);
-
   return (
     <EditorContext.Provider value={{ editor }}>
       <Toolbar
