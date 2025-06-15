@@ -35,7 +35,7 @@ export function AppSidebar({ session }: { session: any }) {
   return (
     <Sidebar
       className="flex flex-col min-h-screen bg-white border-r border-gray-200"
-      collapsible="none"
+      collapsible="offcanvas"
     >
       <SidebarHeader className="p-4">
         <SidebarMenu>

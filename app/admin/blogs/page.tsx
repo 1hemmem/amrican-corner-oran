@@ -173,7 +173,7 @@ export default function BlogDashboard() {
   }
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-10 bg-white">
       <div className="container mx-auto">
         {/* Header with title and create button */}
         <div className="mb-12">
