@@ -13,7 +13,6 @@ export async function POST(req: Request) {
     const data = await prisma.blogs.create({
       data: {
         title,
-        blog_cover_url: '/placeholder-blog.jpg',
       },
     });
     return NextResponse.json({ success: true, data });

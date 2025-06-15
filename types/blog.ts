@@ -1,6 +1,6 @@
 export interface Blog {
   id: string;
-  blog_cover_url?: string;
+  blog_cover?: string;
   title: string;
   content?: any; // optional and can hold any JSON structure
   html?: string;

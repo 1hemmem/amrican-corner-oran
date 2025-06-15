@@ -1,11 +1,7 @@
 'use client';
 
 import { AppSidebar } from '@/components/app-sidebar';
-import {
-  SidebarProvider,
-  SidebarInset,
-  SidebarTrigger,
-} from '@/components/ui/sidebar';
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { useEffect, useState } from 'react';
 import { authClient } from '@/lib/auth-client';
 import { useRouter, usePathname } from 'next/navigation';
@@ -17,6 +13,7 @@ export default function AuthLayout({
   const [authStatus, setAuthStatus] = useState<
     'loading' | 'authenticated' | 'unauthenticated'
   >('loading');
+  const [session, setSession] = useState<any>(null); // State to hold session
   const router = useRouter();
   const pathname = usePathname();
 
@@ -24,7 +21,7 @@ export default function AuthLayout({
     const checkAuth = async () => {
       try {
         const res = await authClient.getSession();
-
+        setSession(res);
         if (res?.data) {
           setAuthStatus('authenticated');
           // Redirect to /admin/blogs if on root admin path or login
@@ -78,8 +75,7 @@ export default function AuthLayout({
     return (
       <div className="flex flex-col h-screen overflow-hidden">
         <SidebarProvider>
-          <AppSidebar />
-          <SidebarTrigger className="pt-2" />
+          <AppSidebar session={session} />
           <SidebarInset className="flex-1 overflow-hidden">
             <div className="flex-1 overflow-y-auto">{children}</div>
           </SidebarInset>
