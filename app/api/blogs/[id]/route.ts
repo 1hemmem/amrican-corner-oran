@@ -1,17 +1,23 @@
-import { NextResponse, NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 export async function GET(
   req: NextRequest,
-  contextPromise: Promise<{ params: { id: string } }>
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { params } = await contextPromise;
-  const { searchParams } = req.nextUrl;
-  const blogId = params.id;
-  const isPublic = searchParams.get('isPublic');
-
   try {
-    const whereClause: any = { id: blogId };
+    // Await params to resolve the id
+    const { id: blogId } = await params;
+
+    // Validate blogId
+    if (!blogId || typeof blogId !== 'string') {
+      return NextResponse.json({ error: 'Invalid blog ID' }, { status: 400 });
+    }
+
+    const { searchParams } = req.nextUrl;
+    const isPublic = searchParams.get('isPublic');
+
+    const whereClause: { id: string; isPublic?: boolean } = { id: blogId };
 
     if (isPublic === 'true') {
       whereClause.isPublic = true;
@@ -27,13 +33,17 @@ export async function GET(
 
     return NextResponse.json({ success: true, data: blog });
   } catch (error) {
-    console.error('Fetch error:', error);
+    console.error('Fetch blog error:', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     );
   }
 }
+
 export async function DELETE(
   req: NextRequest,
   { params }: { params: { id: string } }

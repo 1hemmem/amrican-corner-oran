@@ -10,6 +10,8 @@ import { useEffect, useState } from 'react';
 import { authClient } from '@/lib/auth-client';
 import { useRouter, usePathname } from 'next/navigation';
 import { Spinner } from '@/components/ui/spinner';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { MobileAdminNavbar } from '@/components/mobile-admin-nav';
 
 export default function AuthLayout({
   children,
@@ -20,6 +22,7 @@ export default function AuthLayout({
   const [session, setSession] = useState<any>(null); // State to hold session
   const router = useRouter();
   const pathname = usePathname();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -79,9 +82,10 @@ export default function AuthLayout({
     return (
       <div className="flex flex-col h-screen overflow-hidden">
         <SidebarProvider>
-          <AppSidebar session={session} />
+          {!isMobile && <AppSidebar session={session} />}
+          {isMobile && <MobileAdminNavbar />}
           <SidebarInset className="flex-1 overflow-hidden">
-            <SidebarTrigger className="mt-2" />
+            {!isMobile && <SidebarTrigger className="mt-2" />}
             <div className="flex-1 overflow-y-auto">{children}</div>
           </SidebarInset>
         </SidebarProvider>
