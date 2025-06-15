@@ -43,7 +43,7 @@ export function NavUser({
       }
 
       // Redirect to login page after successful logout
-      router.push('/login');
+      router.push('/admin/login');
       // Optional: refresh the page to clear any client-side state
       router.refresh();
     } catch (error) {
