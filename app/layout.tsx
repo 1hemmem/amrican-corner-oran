@@ -5,6 +5,7 @@ import Providers from '@/components/providers';
 export const metadata = {
   title: 'American Corner Oran',
   description: 'Official website of the American Corner in Oran, Algeria',
+  icons: { icon: '/logo.ico' },
 };
 
 export default function RootLayout({

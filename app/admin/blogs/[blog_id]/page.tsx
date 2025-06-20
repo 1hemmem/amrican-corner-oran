@@ -191,42 +191,41 @@ export default function Page({
     <section className="py-2 bg-white">
       <div className="container mx-auto">
         <header className="mb-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="flex-1 flex items-center gap-4 flex-wrap">
+          <div className="flex flex-col gap-4">
+            {/* Top row - Back button and saving indicator */}
+            <div className="flex items-center justify-between">
               <button
-                className="text-[#bf0a30] gap-2 flex items-center whitespace-nowrap"
+                className="text-[#bf0a30] gap-2 flex items-center hover:text-[#a0081f] transition-colors"
                 onClick={() => router.push('/admin/blogs')}
               >
                 <ArrowLeft className="h-4 w-4" />
-                Back to Blogs
+                <span className="text-sm md:text-base">Back to Blogs</span>
               </button>
-              <span className="font-bold text-[#002868] whitespace-nowrap">
-                Title:{' '}
-              </span>
+              {updateTitleMutation.isPending && (
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  <span>Saving...</span>
+                </div>
+              )}
+            </div>
+
+            {/* Middle row - Title input */}
+            <div className="w-full">
               <Input
                 value={editedTitle}
                 onChange={(e) => setEditedTitle(e.target.value)}
-                className="text-3xl font-bold text-[#002868] border-gray-300 focus:border-[#002868] rounded-lg min-w-[200px] flex-1"
-                placeholder="Blog title"
+                className="w-full text-xl md:text-2xl font-bold text-[#002868] border-2 border-gray-200 focus:border-[#002868] focus:ring-2 focus:ring-[#002868]/20 rounded-lg px-4 py-3 transition-all duration-200"
+                placeholder="Enter blog title..."
                 disabled={updateTitleMutation.isPending}
               />
-              {updateTitleMutation.isPending && (
-                <span className="text-sm text-gray-700 whitespace-nowrap">
-                  Saving...
-                </span>
-              )}
             </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <Switch
-                  id="visibility-toggle"
-                  checked={blog.isPublic}
-                  onCheckedChange={() => toggleVisibilityMutation.mutate()}
-                  disabled={toggleVisibilityMutation.isPending}
-                />
+
+            {/* Bottom row - Visibility toggle */}
+            <div className="flex items-center justify-between md:justify-end">
+              <div className="flex items-center gap-3 rounded-lg px-4 py-2">
                 <Label
                   htmlFor="visibility-toggle"
-                  className="flex items-center gap-2 text-gray-700"
+                  className="flex items-center gap-2 text-gray-700 font-medium text-sm"
                 >
                   {blog.isPublic ? (
                     <>
@@ -235,11 +234,30 @@ export default function Page({
                     </>
                   ) : (
                     <>
-                      <EyeOff className="h-4 w-4 text-[#bf0a30]" />
+                      <EyeOff className="h-4 w-4 text-gray-500" />
                       <span>Private</span>
                     </>
                   )}
                 </Label>
+                <Switch
+                  id="visibility-toggle"
+                  checked={blog.isPublic}
+                  onCheckedChange={() => toggleVisibilityMutation.mutate()}
+                  disabled={toggleVisibilityMutation.isPending}
+                />
+              </div>
+
+              {/* Status indicator on mobile */}
+              <div className="md:hidden">
+                {blog.isPublic ? (
+                  <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                    Live
+                  </span>
+                ) : (
+                  <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                    Draft
+                  </span>
+                )}
               </div>
             </div>
           </div>
